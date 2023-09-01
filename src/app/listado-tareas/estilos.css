@@ -1,0 +1,32 @@
+.listado-tareas {
+  position: relative;
+  width: 50% !important;
+  border: 1px solid #d3d3d3;
+  left: calc(50% - 25%);
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.listado-tareas h4 {
+  color: black;
+}
+
+.item-tarea {
+  position: relative;
+  border: 1px solid #d3d3d3;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.item-tarea .titulo-tarea {
+  font-size: 14px;
+  font-weight: 600;
+  color: black;
+}
+
+.item-tarea .descripcion-tarea {
+  font-size: 14px;
+  font-weight: 400;
+  color: black;
+}

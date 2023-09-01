@@ -1,0 +1,12 @@
+.formulario-nueva-tarea {
+  position: relative;
+  width: 50% !important;
+  border: 1px solid #d3d3d3;
+  left: calc(50% - 25%);
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.formulario-nueva-tarea h5 {
+  color: #000;
+}

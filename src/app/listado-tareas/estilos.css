@@ -30,3 +30,10 @@
   font-weight: 400;
   color: black;
 }
+
+.item-tarea.realizada {
+  font-size: 14px;
+  font-weight: 400;
+  color: black;
+  background-color: rgba(46, 125, 50, 0.25);
+}

@@ -1,27 +1,40 @@
-from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import logout
 
-def login(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(request, username=username, password=password)
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
-    if user is not None:
-        return HttpResponse("usuario no existente")
-    else:
-        return HttpResponse("Usuario existente")
-    
+
+@api_view(('POST',))
+def inicioSesion(request):
+    try:
+        m = User.objects.get(username=request.data.get('usuario'))
+        if m.check_password(request.data.get('password')):
+            request.session["member_id"] = m.id
+            return Response({"respuesta": "usuario existente"})
+        else:
+            return Response({"respuesta": "Usuario o contraseña incorrectos"})
+    except User.DoesNotExist:
+        return Response({"respuesta": "Usuario o contraseña incorrectos"})
+
+
+@api_view(('POST',))
 def registro(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    email = request.POST['email']
+    username = request.data.get('usuario')
+    password = request.data.get('password')
+    email = request.data.get('email')
 
     user = User.objects.create_user(username, email, password)
     user.save()
 
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return Response({"respuesta": "Usuario creado"})
 
-def logout_view(request):
-    logout(request)
+
+@api_view(('POST',))
+def logout(request):
+    try:
+        del request.session["member_id"]
+    except KeyError:
+        pass
+    return Response({"respuesta": "You're logged out."})

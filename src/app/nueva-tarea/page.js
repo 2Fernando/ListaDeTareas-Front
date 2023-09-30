@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import { agregarTarea } from "src/util/tarea";
+import { agregarTarea } from "src/api/tarea";
 
 import { useRouter } from "next/navigation";
 
@@ -32,8 +32,9 @@ const NuevaTarea = () => {
       descripcion,
     };
 
-    agregarTarea(datosNuevaTarea);
-    router.replace("/listado-tareas");
+    agregarTarea(datosNuevaTarea).then(() => {
+      router.replace("/listado-tareas");
+    });
   };
 
   const listadoTareaClick = () => {
@@ -42,6 +43,15 @@ const NuevaTarea = () => {
 
   return (
     <Grid container className="formulario-nueva-tarea">
+      <Grid item xs={12}>
+        <Grid container justifyContent={"end"}>
+          <Grid item xs={"auto"}>
+            <Button onClick={listadoTareaClick} variant="contained">
+              Listado Tarea
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
       <Grid item mb={4}>
         <Typography variant="h5">Nueva Tarea</Typography>
       </Grid>
@@ -69,11 +79,6 @@ const NuevaTarea = () => {
         <Grid item sx={{ mb: 3 }}>
           <Button onClick={nuevaTareaClick} variant="contained">
             Nueva Tarea
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button onClick={listadoTareaClick} variant="text">
-            Listado Tareas
           </Button>
         </Grid>
       </Grid>

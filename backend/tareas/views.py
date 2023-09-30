@@ -1,48 +1,66 @@
-from django.http import JsonResponse
 from backend.tareas.models import Tarea
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.contrib.auth.models import User
 
 
-def listadoTareas(request):
-    tareas = Tarea.objects.all().values()
-    return JsonResponse(list(tareas), safe=False)
+@api_view(('GET',))
+def listado(request):
+    userId = request.session["member_id"]
+    tareas = Tarea.objects.filter(user_id=userId).values()
+    return Response(tareas)
 
 
-def actualizarTarea(request):
-    id = request.data.get("id")
-
-    tarea = Tarea.objects.filter(id=id).first()
+@api_view(('GET',))
+def tarea(request, idTarea):
+    tarea = Tarea.objects.filter(id=idTarea).values()[0]
     if tarea is None:
         response_data = {"respuesta": "Tarea no existe"}
-        return JsonResponse(response_data)
+        return Response(response_data)
 
-    tarea.titulo = request.PUT['titulo']
-    tarea.descripcion = request.PUT['descripcion']
-    tarea.realizada = request.PUT['realizada']
+    return Response(tarea)
+
+
+@api_view(('PUT',))
+def editar(request, idTarea):
+    tarea = Tarea.objects.filter(id=idTarea).first()
+    if tarea is None:
+        response_data = {"respuesta": "Tarea no existe"}
+        return Response(response_data)
+
+    tarea.titulo = request.data.get('titulo')
+    tarea.descripcion = request.data.get('descripcion')
+    tarea.realizada = request.data.get('realizada')
 
     tarea.save()
     response_data = {"respuesta": "tarea actualizada"}
-    return JsonResponse(response_data)
+    return Response(response_data)
 
 
-@csrf_exempt
-def crearTarea(request):
-    titulo_tarea = request.POST['titulo']
-    descripcion_tarea = request.POST['descripcion']
-    print(titulo_tarea)
+@api_view(('POST',))
+def crear(request):
+    titulo_tarea = request.data.get('titulo')
+    descripcion_tarea = request.data.get('descripcion')
+
+    userId = request.session["member_id"]
+
+    user = User.objects.filter(id=userId).first()
+
     nueva_tarea = Tarea(titulo=titulo_tarea,
-                        descripcion=descripcion_tarea, realizada=False)
+                        descripcion=descripcion_tarea, realizada=False, user=user)
     nueva_tarea.save()
-    return JsonResponse("", safe=False)
+
+    return Response({"respuesta": "tarea creada"})
 
 
-def borrarTarea(request):
+@api_view(('DELETE',))
+def eliminar(request):
     id = request.data.get("id")
 
     tarea = Tarea.objects.filter(id=id).first()
     if tarea is None:
         response_data = {"respuesta": "Tarea no existe"}
-        return JsonResponse(response_data)
+        return Response(response_data)
 
     tarea.delete()
-    return JsonResponse({"respuesta": "tarea borrada"})
+    return Response({"respuesta": "tarea borrada"})

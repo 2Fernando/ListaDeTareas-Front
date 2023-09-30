@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import { registrarse } from "src/util/usuario";
+import { registrarse } from "src/api/usuario";
 
 import { useRouter } from "next/navigation";
 
@@ -16,10 +16,15 @@ const Registro = () => {
   const router = useRouter();
 
   const [usuario, setUsuario] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const usuarioOnChange = (event) => {
     setUsuario(event.target.value);
+  };
+
+  const emailOnChange = (event) => {
+    setEmail(event.target.value);
   };
 
   const passwordOnChange = (event) => {
@@ -29,12 +34,13 @@ const Registro = () => {
   const registrarseClick = () => {
     const datosRegistro = {
       usuario,
+      email,
       password,
     };
 
-    registrarse(datosRegistro);
-
-    router.replace("/inicio-sesion");
+    registrarse(datosRegistro).then(() => {
+      router.replace("/inicio-sesion");
+    });
   };
 
   const iniciarSesionClick = () => {
@@ -61,8 +67,19 @@ const Registro = () => {
           <TextField
             variant="outlined"
             color="warning"
+            label="Email"
+            value={email}
+            onChange={emailOnChange}
+            placeholder="Email"
+          />
+        </FormControl>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <TextField
+            variant="outlined"
+            color="warning"
             label="Contraseña"
             value={password}
+            type="password"
             onChange={passwordOnChange}
             placeholder="Contraseña"
           />

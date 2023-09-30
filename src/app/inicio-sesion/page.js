@@ -8,12 +8,14 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import { inicioSesion } from "src/util/usuario";
+import { inicioSesion } from "src/api/usuario";
 
 import { useRouter } from "next/navigation";
 
 const InicioSesion = () => {
   const router = useRouter();
+
+  const [mensajeError, setMensajeError] = React.useState("");
 
   const [usuario, setUsuario] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -32,9 +34,13 @@ const InicioSesion = () => {
       password,
     };
 
-    if (inicioSesion(datosRegistro)) {
-      router.replace("/listado-tareas");
-    }
+    inicioSesion(datosRegistro).then((resultado) => {
+      if (resultado.respuesta === "usuario existente") {
+        router.replace("/listado-tareas");
+      } else {
+        setMensajeError(resultado.respuesta);
+      }
+    });
   };
 
   const registrarseClick = () => {
@@ -47,35 +53,47 @@ const InicioSesion = () => {
         <Typography variant="h5">Iniciar sesion</Typography>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <TextField
-            variant="outlined"
-            color="warning"
-            label="Nombre Usuario"
-            value={usuario}
-            onChange={usuarioOnChange}
-            placeholder="Nombre Usuario"
-          />
-        </FormControl>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <TextField
-            variant="outlined"
-            color="warning"
-            label="Contraseña"
-            value={password}
-            onChange={passwordOnChange}
-            placeholder="Contraseña"
-          />
-        </FormControl>
-        <Grid item sx={{ mb: 3 }}>
-          <Button onClick={iniciarSesionClick} variant="contained">
-            Iniciar sesion
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button onClick={registrarseClick} variant="text">
-            Registrarse
-          </Button>
+        <Grid container justifyContent="center">
+          <Grid item xs="auto">
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                variant="outlined"
+                color="warning"
+                label="Nombre Usuario"
+                value={usuario}
+                onChange={usuarioOnChange}
+                placeholder="Nombre Usuario"
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs="auto">
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                variant="outlined"
+                color="warning"
+                label="Contraseña"
+                value={password}
+                type="password"
+                onChange={passwordOnChange}
+                placeholder="Contraseña"
+              />
+            </FormControl>
+          </Grid>
+          {mensajeError && (
+            <Grid>
+              <Typography color={"error"}>{mensajeError}</Typography>
+            </Grid>
+          )}
+          <Grid item my={3}>
+            <Button onClick={iniciarSesionClick} variant="contained">
+              Iniciar sesion
+            </Button>
+          </Grid>
+          <Grid item xs="auto">
+            <Button onClick={registrarseClick} variant="text">
+              Registrarse
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
